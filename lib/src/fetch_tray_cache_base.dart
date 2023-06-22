@@ -75,8 +75,9 @@ class TrayCachePlugin implements TrayPlugin {
             .toExtra(),
       );
 
+      // TODO(@lukas): not used right now
       if (cachedRequest.cacheDuration != null) {
-        // TODO: @Lukas refactor this key
+        // TODO(@lukas): refactor this key
         extra.addAll(
           {
             'FT_cacheDuration': cachedRequest.cacheDuration!,

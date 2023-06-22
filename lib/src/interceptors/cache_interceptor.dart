@@ -32,10 +32,8 @@ class TrayCacheInterceptor extends Interceptor {
     final key = cacheOptions.keyBuilder(options);
     final store = cacheOptions.store;
 
-    // TODO: Factor out this key
+    // TODO(@lukas): not used right now
     final requestCacheDuration = options.extra['FT_cacheDuration'] as Duration?;
-
-    print(requestCacheDuration);
 
     final ignoreCache =
         CacheOptions.fromExtra(options)?.policy == CachePolicy.noCache;

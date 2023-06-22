@@ -13,6 +13,9 @@
 
 include: package:lints/recommended.yaml
 
+linter:
+  rules:
+    - avoid_print
 # Uncomment the following section to specify additional rules.
 
 # linter:
