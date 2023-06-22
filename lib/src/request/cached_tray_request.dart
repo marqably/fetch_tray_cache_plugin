@@ -1,15 +1,24 @@
-/* CachedTrayRequest<T> extends TrayRequest<T> {
-  final bool useCache;
-  final Duration? cacheDuration;
-
-}
- */
-
-/* mixin TrayCacheMixin {
-  bool get useCache => true;
-  Duration? get cacheDuration => null;
-} */
-
+/// Custom interface to configure caching for a single request.
+///
+/// Implement this interface on a [TrayRequest] to configure caching for that
+/// by overriding [useCache] and [cacheDuration].
+///
+/// Example:
+///
+/// ```dart
+/// class TestCachedRequest extends MyRequest<String> implements CachedTrayRequest {
+///  TestCachedRequest()
+///     : super(
+///         url: '/test-cached',
+///       );
+///
+///   @override
+///   Duration get cacheDuration => Duration(seconds: 5);
+///
+///   @override
+///   bool get useCache => true;
+/// }
+/// ```
 class CachedTrayRequest {
   final bool useCache;
   final Duration? cacheDuration;

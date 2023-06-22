@@ -6,6 +6,7 @@ import 'package:fetch_tray/fetch_tray.dart';
 import '../fetch_tray_cache.dart';
 import 'interceptors/cache_interceptor.dart';
 
+/// Type of cache store
 enum TrayCacheStoreType {
   /// Store cache in memory
   memory,
@@ -14,6 +15,12 @@ enum TrayCacheStoreType {
   hive,
 }
 
+/// Plugin to enable caching GET requests.
+///
+/// This plugin uses [dio_cache_interceptor](https://pub.dev/packages/dio_cache_interceptor)
+/// to cache requests and a custom interceptor to handle cache expiration. By default,
+/// requests are cached for [cacheDuration]. You can override this value by implementing
+/// [CachedTrayRequest] on a [TrayRequest] and returning a different value for [cacheDuration].
 class TrayCachePlugin implements TrayPlugin {
   final TrayCacheStoreType cacheStoreType;
   final Duration cacheDuration;
@@ -46,6 +53,7 @@ class TrayCachePlugin implements TrayPlugin {
         ),
       ];
 
+  /// Options to be used by [dio_cache_interceptor]
   CacheOptions get cacheOptions => CacheOptions(
         store: store,
         policy: CachePolicy.forceCache,
@@ -68,6 +76,7 @@ class TrayCachePlugin implements TrayPlugin {
       );
 
       if (cachedRequest.cacheDuration != null) {
+        // TODO: @Lukas refactor this key
         extra.addAll(
           {
             'FT_cacheDuration': cachedRequest.cacheDuration!,

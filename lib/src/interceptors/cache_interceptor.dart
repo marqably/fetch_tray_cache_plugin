@@ -1,6 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
+/// Custom interceptor to handle cache expiration. This is necessary because
+/// [dio_cache_interceptor] does not support cache expiration on the client side.
+/// So if the server does not return a `Cache-Control` header, the cache will
+/// never expire.
+///
+/// This interceptor checks if the cache is older than [maxAge] and deletes
+/// it if it is. If the cache is not older than [maxAge], it returns the cached
+/// response. If there is no cache, it continues the request.
+///
+/// [cacheOptions] have to be passed in order to figure out the cache key and
+/// actually retrieve the cached item.
+///
+/// This interceptor should be used before [DioCacheInterceptor] to avoid
+/// unnecessary requests.
 class TrayCacheInterceptor extends Interceptor {
   final Duration maxAge;
   final CacheOptions cacheOptions;
@@ -18,6 +32,7 @@ class TrayCacheInterceptor extends Interceptor {
     final key = cacheOptions.keyBuilder(options);
     final store = cacheOptions.store;
 
+    // TODO: Factor out this key
     final requestCacheDuration = options.extra['FT_cacheDuration'] as Duration?;
 
     print(requestCacheDuration);
