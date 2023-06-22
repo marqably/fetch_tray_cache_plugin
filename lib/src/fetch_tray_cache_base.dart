@@ -23,13 +23,14 @@ class TrayCachePlugin implements TrayPlugin {
   TrayCachePlugin({
     this.cacheStoreType = TrayCacheStoreType.memory,
     this.cacheDuration = const Duration(days: 7),
+    String? cacheDirectory,
   }) {
     switch (cacheStoreType) {
       case TrayCacheStoreType.memory:
         store = MemCacheStore();
         break;
       case TrayCacheStoreType.hive:
-        store = HiveCacheStore('./.cache');
+        store = HiveCacheStore(cacheDirectory);
         break;
     }
   }
