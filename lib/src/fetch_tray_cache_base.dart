@@ -1,4 +1,4 @@
-import 'package:dio/src/dio_mixin.dart';
+import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:fetch_tray/fetch_tray.dart';
@@ -15,6 +15,11 @@ enum TrayCacheStoreType {
   hive,
 }
 
+class TrayCachePluginKeys {
+  static const requestCacheDuration = '@fetch_tray_requestCacheDuration@';
+  static const requestShouldLog = '@fetch_tray_requestShouldLog@';
+}
+
 /// Plugin to enable caching GET requests.
 ///
 /// This plugin uses [dio_cache_interceptor](https://pub.dev/packages/dio_cache_interceptor)
@@ -24,7 +29,6 @@ enum TrayCacheStoreType {
 class TrayCachePlugin implements TrayPlugin {
   final TrayCacheStoreType cacheStoreType;
   final Duration cacheDuration;
-
   late final CacheStore store;
 
   TrayCachePlugin({
@@ -75,18 +79,22 @@ class TrayCachePlugin implements TrayPlugin {
             .toExtra(),
       );
 
-      // TODO(@lukas): not used right now
       if (cachedRequest.cacheDuration != null) {
-        // TODO(@lukas): refactor this key
         extra.addAll(
           {
-            'FT_cacheDuration': cachedRequest.cacheDuration!,
+            TrayCachePluginKeys.requestCacheDuration:
+                cachedRequest.cacheDuration!,
           },
         );
       }
     } else {
       extra.addAll(cacheOptions.toExtra());
     }
+
+    extra.addAll({
+      TrayCachePluginKeys.requestShouldLog:
+          request.getEnvironment().showDebugInfo(),
+    });
 
     return extra;
   }

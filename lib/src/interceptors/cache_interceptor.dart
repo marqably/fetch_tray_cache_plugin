@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:fetch_tray_cache_plugin/src/fetch_tray_cache_base.dart';
+import 'package:logger/logger.dart';
 
 /// Custom interceptor to handle cache expiration. This is necessary because
 /// [dio_cache_interceptor] does not support cache expiration on the client side.
@@ -18,6 +20,12 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 class TrayCacheInterceptor extends Interceptor {
   final Duration maxAge;
   final CacheOptions cacheOptions;
+  final Logger logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      printTime: true,
+    ),
+  );
 
   TrayCacheInterceptor({
     required this.cacheOptions,
@@ -29,11 +37,17 @@ class TrayCacheInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    // TODO: implement filter for logger
+    /* final requestShouldLog =
+        options.extra[TrayCachePluginKeys.requestShouldLog] as bool? ?? false; */
+
+    final logPrefix =
+        '[fetch_tray_cache_plugin] ${options.method} ${options.uri}';
     final key = cacheOptions.keyBuilder(options);
     final store = cacheOptions.store;
 
-    // TODO(@lukas): not used right now
-    final requestCacheDuration = options.extra['FT_cacheDuration'] as Duration?;
+    final requestCacheDuration =
+        options.extra[TrayCachePluginKeys.requestCacheDuration] as Duration?;
 
     final ignoreCache =
         CacheOptions.fromExtra(options)?.policy == CachePolicy.noCache;
@@ -42,26 +56,26 @@ class TrayCacheInterceptor extends Interceptor {
       final cache = await store.get(key);
 
       if (cache != null) {
-        print('Cache has entry');
         final difference = DateTime.now().difference(cache.responseDate);
 
-        if (difference > maxAge) {
-          print('Cache expired');
-          await store.delete(key);
-          handler.next(options);
-          return;
-        } else {
+        final cacheDuration = requestCacheDuration ?? maxAge;
+
+        if (difference <= cacheDuration) {
+          logger.i('Cache hit, returning cached response', logPrefix);
           return handler.resolve(
             cache.toResponse(
               options,
               fromNetwork: false,
             ),
           );
+        } else {
+          logger.i('Cache too old, deleting...', logPrefix);
+          await store.delete(key);
         }
       }
     }
 
-    print('From network');
+    logger.i('Sending request over network', logPrefix);
 
     handler.next(options);
   }

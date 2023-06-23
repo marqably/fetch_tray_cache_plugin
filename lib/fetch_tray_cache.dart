@@ -4,4 +4,5 @@
 library fetch_tray_cache_plugin;
 
 export 'src/fetch_tray_cache_base.dart';
+export 'src/interceptors/cache_interceptor.dart';
 export 'src/request/cached_tray_request.dart';
