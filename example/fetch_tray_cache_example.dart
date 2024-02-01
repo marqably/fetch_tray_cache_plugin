@@ -15,6 +15,7 @@ void main() async {
       TrayCachePlugin(
         cacheStoreType: TrayCacheStoreType.memory,
         cacheDuration: const Duration(seconds: 2),
+        loggingEnabled: true,
       ),
     ],
   );

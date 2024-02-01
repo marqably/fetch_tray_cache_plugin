@@ -20,6 +20,7 @@ import 'package:logger/logger.dart';
 class TrayCacheInterceptor extends Interceptor {
   final Duration maxAge;
   final CacheOptions cacheOptions;
+  final bool loggingEnabled;
   final Logger logger = Logger(
     printer: PrettyPrinter(
       methodCount: 0,
@@ -30,11 +31,12 @@ class TrayCacheInterceptor extends Interceptor {
   TrayCacheInterceptor({
     required this.cacheOptions,
     required this.maxAge,
+    this.loggingEnabled = false,
   });
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler,
-      [bool loggingEnabled = false]) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // TODO: implement filter for logger
     /* final requestShouldLog =
         options.extra[TrayCachePluginKeys.requestShouldLog] as bool? ?? false; */
