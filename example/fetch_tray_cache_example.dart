@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:fetch_tray/fetch_tray.dart';
+import 'package:fetch_tray/utils/make_tray_request.dart';
 import 'package:fetch_tray_cache_plugin/fetch_tray_cache.dart';
 
 import 'models/post.dart';
