@@ -33,10 +33,8 @@ class TrayCacheInterceptor extends Interceptor {
   });
 
   @override
-  void onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler,
+      [bool loggingEnabled = false]) async {
     // TODO: implement filter for logger
     /* final requestShouldLog =
         options.extra[TrayCachePluginKeys.requestShouldLog] as bool? ?? false; */
@@ -61,7 +59,11 @@ class TrayCacheInterceptor extends Interceptor {
         final cacheDuration = requestCacheDuration ?? maxAge;
 
         if (difference <= cacheDuration) {
-          logger.i('Cache hit, returning cached response', logPrefix);
+          if (loggingEnabled) {
+            logger.i(
+              '$logPrefix Cache hit, returning cached response',
+            );
+          }
           return handler.resolve(
             cache.toResponse(
               options,
@@ -69,13 +71,21 @@ class TrayCacheInterceptor extends Interceptor {
             ),
           );
         } else {
-          logger.i('Cache too old, deleting...', logPrefix);
+          if (loggingEnabled) {
+            logger.i(
+              '$logPrefix Cache too old, deleting...',
+            );
+          }
           await store.delete(key);
         }
       }
     }
 
-    logger.i('Sending request over network', logPrefix);
+    if (loggingEnabled) {
+      logger.i(
+        '$logPrefix Sending request over network',
+      );
+    }
 
     handler.next(options);
   }
