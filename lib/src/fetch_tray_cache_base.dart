@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:fetch_tray/fetch_tray.dart';
+import 'package:logger/logger.dart';
 
 import '../fetch_tray_cache.dart';
 
@@ -28,13 +29,14 @@ class TrayCachePluginKeys {
 class TrayCachePlugin implements TrayPlugin {
   final TrayCacheStoreType cacheStoreType;
   final Duration cacheDuration;
-  final bool loggingEnabled;
+
+  final Level logLevel;
   late final CacheStore store;
 
   TrayCachePlugin({
     this.cacheStoreType = TrayCacheStoreType.memory,
     this.cacheDuration = const Duration(days: 7),
-    this.loggingEnabled = false,
+    this.logLevel = Level.error,
     String? cacheDirectory,
   }) {
     switch (cacheStoreType) {
@@ -52,7 +54,7 @@ class TrayCachePlugin implements TrayPlugin {
         TrayCacheInterceptor(
           cacheOptions: cacheOptions,
           maxAge: cacheDuration,
-          loggingEnabled: loggingEnabled,
+          logLevel: logLevel,
         ),
         DioCacheInterceptor(
           options: cacheOptions,

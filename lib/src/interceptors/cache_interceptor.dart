@@ -20,18 +20,19 @@ import 'package:logger/logger.dart';
 class TrayCacheInterceptor extends Interceptor {
   final Duration maxAge;
   final CacheOptions cacheOptions;
-  final bool loggingEnabled;
-  final Logger logger = Logger(
-    printer: PrettyPrinter(
-      methodCount: 0,
-      printTime: true,
-    ),
-  );
+  final Level logLevel;
+
+  get logger => Logger(
+      printer: PrettyPrinter(
+        methodCount: 0,
+        printTime: true,
+      ),
+      level: logLevel);
 
   TrayCacheInterceptor({
     required this.cacheOptions,
     required this.maxAge,
-    this.loggingEnabled = false,
+    this.logLevel = Level.error,
   });
 
   @override
@@ -61,11 +62,9 @@ class TrayCacheInterceptor extends Interceptor {
         final cacheDuration = requestCacheDuration ?? maxAge;
 
         if (difference <= cacheDuration) {
-          if (loggingEnabled) {
-            logger.i(
-              '$logPrefix Cache hit, returning cached response',
-            );
-          }
+          logger.i(
+            '$logPrefix Cache hit, returning cached response',
+          );
           return handler.resolve(
             cache.toResponse(
               options,
@@ -73,21 +72,17 @@ class TrayCacheInterceptor extends Interceptor {
             ),
           );
         } else {
-          if (loggingEnabled) {
-            logger.i(
-              '$logPrefix Cache too old, deleting...',
-            );
-          }
+          logger.i(
+            '$logPrefix Cache too old, deleting...',
+          );
           await store.delete(key);
         }
       }
     }
 
-    if (loggingEnabled) {
-      logger.i(
-        '$logPrefix Sending request over network',
-      );
-    }
+    logger.i(
+      '$logPrefix Sending request over network',
+    );
 
     handler.next(options);
   }
