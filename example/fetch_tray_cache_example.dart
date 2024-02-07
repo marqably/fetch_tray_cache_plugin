@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:fetch_tray/fetch_tray.dart';
 import 'package:fetch_tray_cache_plugin/fetch_tray_cache.dart';
+import 'package:logger/logger.dart';
 
 import 'models/post.dart';
 import 'requests/get_all_posts_request.dart';
@@ -15,6 +16,8 @@ void main() async {
       TrayCachePlugin(
         cacheStoreType: TrayCacheStoreType.memory,
         cacheDuration: const Duration(seconds: 2),
+        logLevel: Level.debug,
+        // cacheDirectory: (await getTemporaryDirectory()).path,
       ),
     ],
   );

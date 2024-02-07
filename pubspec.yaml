@@ -1,22 +1,20 @@
 name: fetch_tray_cache_plugin
 description: A caching plugin for fetch_tray.
-version: 0.0.2
+version: 0.0.4
+publish_to: none
 # repository: https://github.com/my_org/my_repo
 
 environment:
-  sdk: ^3.0.2
+  sdk: ">=3.0.0 <4.0.0"
 
 # Add regular dependencies here.
 dependencies:
-  fetch_tray:
-    git:
-      url: https://github.com/marqably/fetch_tray
-      ref: next
+  fetch_tray: 0.2.4
   dio: ^5.2.1+1
   dio_cache_interceptor: ^3.4.2
   dio_cache_interceptor_hive_store: ^3.2.1
-  logger: ^1.4.0
+  logger: ^2.0.2+1
 
 dev_dependencies:
-  lints: ^2.0.0
+  lints: ^3.0.0
   test: ^1.21.0
